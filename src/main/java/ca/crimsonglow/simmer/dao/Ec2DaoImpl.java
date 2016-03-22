@@ -22,17 +22,39 @@ import ca.crimsonglow.simmer.model.Instance;
 import ca.crimsonglow.simmer.model.Snapshot;
 import ca.crimsonglow.simmer.model.Volume;
 
+/**
+ * An implementation of the EC2 data access interface.
+ */
 public class Ec2DaoImpl implements Ec2Dao {
   private final AmazonEC2 _ec2;
 
+  /**
+   * Creates a new EC2DaoImpl object.
+   * 
+   * @param ec2
+   *          A handle to an authenticated AmazonEC2 object.
+   */
   public Ec2DaoImpl(AmazonEC2 ec2) {
     _ec2 = ec2;
   }
 
+  /**
+   * Creates a new EC2DaoImpl object. System properties (aws.accessKeyId and
+   * aws.secretKey) are used to create an authenticated AmazonEC2 object.
+   */
   public Ec2DaoImpl() {
     this(new AmazonEC2Client(new SystemPropertiesCredentialsProvider()));
   }
 
+  /**
+   * Returns an instance object, given its ID.
+   *
+   * @param id
+   *          The instance ID.
+   * @return An instance with a matching ID.
+   * @throws NotFoundException
+   *           If an instance with the given ID could not be found.
+   */
   public Instance getInstanceById(String id) throws NotFoundException {
     DescribeInstancesRequest request = new DescribeInstancesRequest().withInstanceIds(id);
 
@@ -46,6 +68,11 @@ public class Ec2DaoImpl implements Ec2Dao {
     throw new NotFoundException(String.format("Instance %s was not found", id));
   }
 
+  /**
+   * Returns all disk volume objects.
+   *
+   * @return All disk volume objects.
+   */
   public Collection<Volume> getVolumes() {
     Collection<com.amazonaws.services.ec2.model.Volume> response = _ec2.describeVolumes().getVolumes();
     Collection<Volume> result = new ArrayList<Volume>(response.size());
@@ -58,6 +85,13 @@ public class Ec2DaoImpl implements Ec2Dao {
     return result;
   }
 
+  /**
+   * Creates a snapshot of a disk volume.
+   *
+   * @param volume
+   *          The disk volume for which to take the snapshot.
+   * @return The disk volume for which to take the snapshot.
+   */
   public Snapshot createSnapshot(Volume volume) {
     CreateSnapshotRequest request = new CreateSnapshotRequest().withVolumeId(volume.getId());
 
@@ -73,6 +107,13 @@ public class Ec2DaoImpl implements Ec2Dao {
     return new Snapshot(response.getSnapshot());
   }
 
+  /**
+   * Returns all snapshots for a given disk volume.
+   *
+   * @param volume
+   *          The disk volume for which to find snapshots.
+   * @return All snapshots for a given disk volume.
+   */
   public Collection<Snapshot> getSnapshots(Volume volume) {
     DescribeSnapshotsRequest request = new DescribeSnapshotsRequest()
         .withFilters(new Filter().withName("volume-id").withValues(volume.getId()));
@@ -87,6 +128,16 @@ public class Ec2DaoImpl implements Ec2Dao {
     return result;
   }
 
+  /**
+   * Deletes a snapshot.
+   *
+   * @param snapshot
+   *          The snapshot to delete.
+   * @throws BadRequestException
+   *           If the request contains an error.
+   * @throws NotFoundException
+   *           If the snapshot does not exist.
+   */
   public void deleteSnapshot(Snapshot snapshot) throws BadRequestException, NotFoundException {
     try {
       _ec2.deleteSnapshot(new DeleteSnapshotRequest().withSnapshotId(snapshot.getId()));
