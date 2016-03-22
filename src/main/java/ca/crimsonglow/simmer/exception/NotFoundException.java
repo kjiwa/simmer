@@ -1,14 +1,30 @@
 package ca.crimsonglow.simmer.exception;
 
-public class NotFoundException extends Throwable
-{
-	public NotFoundException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
+/**
+ * An exception representing that an entity could not be found.
+ */
+public class NotFoundException extends Throwable {
+  private static final long serialVersionUID = 1L;
 
-	public NotFoundException(String message)
-	{
-		super(message);
-	}
+  /**
+   * Creates a new NotFound exception.
+   * 
+   * @param message
+   *          The exception message.
+   * @param cause
+   *          The exception that caused this exception to be raised.
+   */
+  public NotFoundException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  /**
+   * Creates a new NotFound exception.
+   * 
+   * @param message
+   *          The exception message.
+   */
+  public NotFoundException(String message) {
+    super(message);
+  }
 }

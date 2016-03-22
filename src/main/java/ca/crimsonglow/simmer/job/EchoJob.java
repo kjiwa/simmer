@@ -1,24 +1,29 @@
 package ca.crimsonglow.simmer.job;
 
-import ca.crimsonglow.simmer.SimmerJob;
-
 import java.util.Properties;
 
-public class EchoJob extends SimmerJob
-{
-	public EchoJob(String[] args)
-	{
-		super(args);
-	}
+import ca.crimsonglow.simmer.Job;
 
-	@Override
-	protected void run(Properties p)
-	{
-		System.out.println(p);
-	}
+/**
+ * A sample job that prints the job arguments to the console.
+ */
+public class EchoJob extends Job {
+  /**
+   * Creates a new Echo job.
+   *
+   * @param args
+   *          The job arguments.
+   */
+  public EchoJob(String[] args) {
+    super(args);
+  }
 
-	public static void main(String[] args)
-	{
-		new EchoJob(args);
-	}
+  @Override
+  protected void run(Properties p) {
+    System.out.println(p);
+  }
+
+  public static void main(String[] args) {
+    new EchoJob(args);
+  }
 }

@@ -1,24 +1,31 @@
 package ca.crimsonglow.simmer.job;
 
-import ca.crimsonglow.simmer.SimmerJob;
-import ca.crimsonglow.simmer.SimmerServiceImpl;
-
 import java.util.Properties;
 
-public class CreateSnapshotsJob extends SimmerJob
-{
-	public CreateSnapshotsJob(String[] args)
-	{
-		super(args);
-	}
+import ca.crimsonglow.simmer.Job;
+import ca.crimsonglow.simmer.SnapshotRetentionServiceImpl;
 
-	protected void run(Properties p)
-	{
-		new SimmerServiceImpl().createSnapshots();
-	}
+/**
+ * A job that creates volume snapshots for each volume that is attached to an
+ * instance.
+ */
+public class CreateSnapshotsJob extends Job {
+  /**
+   * Creates a new CreateSnapshots job.
+   *
+   * @param args
+   *          The job arguments.
+   */
+  public CreateSnapshotsJob(String[] args) {
+    super(args);
+  }
 
-	public static void main(String[] args)
-	{
-		new CreateSnapshotsJob(args);
-	}
+  @Override
+  protected void run(Properties p) {
+    new SnapshotRetentionServiceImpl().createSnapshots();
+  }
+
+  public static void main(String[] args) {
+    new CreateSnapshotsJob(args);
+  }
 }

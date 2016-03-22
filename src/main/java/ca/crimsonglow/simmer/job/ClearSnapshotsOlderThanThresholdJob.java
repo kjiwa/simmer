@@ -1,32 +1,38 @@
 package ca.crimsonglow.simmer.job;
 
-import ca.crimsonglow.simmer.SimmerJob;
-import ca.crimsonglow.simmer.SimmerService;
-import ca.crimsonglow.simmer.SimmerServiceImpl;
-
 import java.util.Calendar;
 import java.util.Properties;
 
-public class ClearSnapshotsOlderThanThresholdJob extends SimmerJob
-{
-	public ClearSnapshotsOlderThanThresholdJob(String[] args)
-	{
-		super(args);
-	}
+import ca.crimsonglow.simmer.Job;
+import ca.crimsonglow.simmer.SnapshotRetentionService;
+import ca.crimsonglow.simmer.SnapshotRetentionServiceImpl;
 
-	protected void run(Properties p)
-	{
-		int snapshotAgeInDays = Integer.parseInt(p.getProperty("snapshotAgeInDays"));
+/**
+ * A job that clears snapshots that have aged beyond a retention period.
+ */
+public class ClearSnapshotsOlderThanThresholdJob extends Job {
+  /**
+   * Creates a new ClearSnapshotsOlderThanThreshold job.
+   *
+   * @param args
+   *          The job arguments.
+   */
+  public ClearSnapshotsOlderThanThresholdJob(String[] args) {
+    super(args);
+  }
 
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DAY_OF_YEAR, -snapshotAgeInDays);
+  @Override
+  protected void run(Properties p) {
+    int snapshotAgeInDays = Integer.parseInt(p.getProperty("snapshotAgeInDays"));
 
-		SimmerService simmer = new SimmerServiceImpl();
-		simmer.clearSnapshotsOlderThan(c.getTime());
-	}
+    Calendar c = Calendar.getInstance();
+    c.add(Calendar.DAY_OF_YEAR, -snapshotAgeInDays);
 
-	public static void main(String[] args)
-	{
-		new ClearSnapshotsOlderThanThresholdJob(args);
-	}
+    SnapshotRetentionService simmer = new SnapshotRetentionServiceImpl();
+    simmer.clearSnapshotsOlderThan(c.getTime());
+  }
+
+  public static void main(String[] args) {
+    new ClearSnapshotsOlderThanThresholdJob(args);
+  }
 }
